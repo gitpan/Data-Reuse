@@ -1,0 +1,15 @@
+README for Data::Constant
+
+Provide an easy way to have constants and literal strings share memory.
+
+Copyright (c) 2006 Elizabeth Mattijsen <liz@dijkmat.nl>. All rights
+reserved.  This program is free software; you can redistribute it and/or
+modify it under the same terms as Perl itself.
+
+Required Modules:
+ Data::Alias (1.0)
+
+perl Makefile.PL
+make
+make test
+make install
