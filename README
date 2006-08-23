@@ -6,6 +6,9 @@ Copyright (c) 2006 Elizabeth Mattijsen <liz@dijkmat.nl>. All rights
 reserved.  This program is free software; you can redistribute it and/or
 modify it under the same terms as Perl itself.
 
+Version:
+ 0.05
+
 Required Modules:
  Data::Alias (1.0)
 

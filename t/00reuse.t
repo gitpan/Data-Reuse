@@ -11,7 +11,8 @@ use strict;
 use warnings;
  
 # the module we need
-use Data::Reuse qw(alias reuse);
+use Data::Alias qw(alias);
+use Data::Reuse qw(reuse);
 
 # need to do dumps for checks
 use Data::Dumper qw(Dumper);

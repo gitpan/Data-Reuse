@@ -1,3 +1,17 @@
+0.05	23 August 2006
+	Some tweaks in "reuse" for better performance.
+
+	Added subroutine "fixate" for easily initializing hashes and list,
+        and to easily fixate already filled hashes and lists.
+
+	Added subtoutine "spread" for easily spreading the same constant
+	value in a hash or a list.
+
+	Added subroutine "forget" for resetting the internal hash for keeping
+	constant values.
+
+	Removed TODO file, please check TODO section in the pod.
+
 0.04	16 July 2006
 	Renamed to Data::Reuse, first version released to CPAN.
 

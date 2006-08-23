@@ -1,9 +1,11 @@
 MANIFEST
 CHANGELOG
 README
-TODO
 Makefile.PL
 lib/Data/Reuse.pm
 ppport.h
-t/00basic.t
+t/00reuse.t
+t/10fixate.t
+t/20spread.t
+t/30forget.t
 META.yml                                 Module meta-data (added by MakeMaker)
