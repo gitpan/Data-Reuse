@@ -2,7 +2,7 @@ package Data::Reuse;
 
 # set up version info
 BEGIN {
-    $VERSION = '0.05';
+    $VERSION = '0.06';
 }    #BEGIN
 
 # be as strict and verbose as possible
@@ -408,7 +408,7 @@ Data::Reuse - share constant values with Data::Alias
 
 =head1 VERSION
 
-This documentation describes version 0.05.
+This documentation describes version 0.06.
 
 =head1 SYNOPSIS
 
@@ -532,7 +532,7 @@ doesn't work, instead use:
 
 =head2 inventory information in a hotel
 
-Inventory information ofter consists of many similar values.  In this
+Inventory information often consists of many similar values.  In this
 particular example of a hotel and whether its rooms have inventory for the
 given period, the dates are always in the same range, the rate ID's are always
 the same values from a set, the prices for a particular room / rate combination
@@ -567,7 +567,7 @@ prices and 10 different number of available rooms.
 Without using this module, this would take up 365 x 10 x 2 x 2 = 14400 scalar
 values x 24 bytes = 350400 bytes.  With using this module, this would use
 365 + 10 + 2 + 10 + 10 = 387 scalar values x 24 bytes = 9288 bytes.  Quite a
-significant difference!  Now multiply this by hundreds of hotels, and you see
+significant difference!  Now multiply this by thousands of hotels, and you see
 that the space savings can become B<very> significant.
 
 =head1 THEORY OF OPERATION
@@ -645,13 +645,13 @@ L<Data::Alias> module.
 
 =head1 REQUIRED MODULES
 
- Data::Alias (1.0)
+ Data::Alias (1.07)
 
 =head1 AUTHOR
 
 Elizabeth Mattijsen <liz@dijkmat.nl>
 
-Copyright (C) 2006 Elizabeth Mattijsen.  All rights reserved.
+Copyright (C) 2006, 2007 Elizabeth Mattijsen.  All rights reserved.
 This program is free software; you can redistribute it and/or modify 
 it under the same terms as Perl itself.
 

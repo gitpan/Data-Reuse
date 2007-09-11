@@ -9,6 +9,6 @@ WriteMakefile (
  VERSION_FROM	=> 'lib/Data/Reuse.pm',
 
  PREREQ_PM	=> {qw(
-		    Data::Alias	 1.0
+		    Data::Alias	 1.07
                    )},
 );

@@ -1,3 +1,7 @@
+0.06	11 September 2007
+	Raised dependency of Data::Alias to version 1.07 because of issues
+	with 1.06 that were fixed in 1.07.  And some minor pod fixes.
+
 0.05	23 August 2006
 	Some tweaks in "reuse" for better performance.
 
