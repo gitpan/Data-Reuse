@@ -1,21 +1,20 @@
 package Data::Reuse;
 
-# set up version info
-BEGIN {
-    $VERSION = '0.06';
-}    #BEGIN
-
 # be as strict and verbose as possible
 use strict;
 use warnings;
 
+# set up version info
+our $VERSION= '0.08';
+
 # we need this otherwise nothing works
-use Data::Alias qw(alias copy);
+use Data::Alias qw( alias copy );
 
 # other modules we need
-use Carp qw(croak);
-use Digest::MD5 qw(md5);
-use Scalar::Util qw(reftype);
+use Carp         qw( croak );
+use Digest::MD5  qw( md5 );
+use Encode       qw( encode_utf8 );
+use Scalar::Util qw( reftype );
 
 =for Explanation:
      Since Data::Alias uses Exporter, we might as well do that also.  Otherwise
@@ -24,15 +23,15 @@ use Scalar::Util qw(reftype);
 =cut
 
 use base 'Exporter';
-our @EXPORT      = qw();
-our @EXPORT_OK   = qw(fixate forget reuse spread);
-our %EXPORT_TAGS = (all => \@EXPORT_OK);
+our @EXPORT=      qw();
+our @EXPORT_OK=   qw( fixate forget reuse spread );
+our %EXPORT_TAGS= ( all => \@EXPORT_OK );
 
 # ID prefixes
-my $U = "\1U\1";
-my $S = "\1S\1";
-my $A = "\1A\1";
-my $H = "\1H\1";
+my $U= "\1U\1";
+my $S= "\1S\1";
+my $A= "\1A\1";
+my $H= "\1H\1";
 
 # set up data store with predefined ro undef value
 my %reuse;
@@ -42,7 +41,7 @@ forget();
 Internals::SvREADONLY $_, 1 foreach ( $U, $S, $A, $H );
 
 # recursion level
-my $level = 0;
+my $level= 0;
 
 # references being handled
 my %handling;
@@ -62,16 +61,16 @@ sub reuse (@); # needed because of recursion
 sub reuse (@) {
 
     # being called with return values
-    my $not_void = defined wantarray;
+    my $not_void= defined wantarray;
 
     # we're one level deeper
     $level++;
 
     # there are values specified that haven't been folded yet or are undef
-    if ( alias my @special = grep { !defined or !exists $reuse{$_} } @_ ) {
+    if ( alias my @special= grep { !defined or !exists $reuse{$_} } @_ ) {
 
         # values specified that haven't been folded yet
-        if ( alias my @new = grep { defined() } @special ) {
+        if ( alias my @new= grep { defined() } @special ) {
             foreach (@new) { # natural aliasing
 
                 # reference being handled, make sure it is known
@@ -80,8 +79,8 @@ sub reuse (@) {
                 }
 
                 # handle references
-                elsif ( my $reftype = reftype $_ ) {
-                    $handling{$_} = $level;
+                elsif ( my $reftype= reftype $_ ) {
+                    $handling{$_}= $level;
                     my $id;
 
                     # aliasing everything in here
@@ -89,12 +88,12 @@ sub reuse (@) {
 
                         # all elements of list
                         if ( $reftype eq 'ARRAY' ) {
-                            $id = _list_id( $_ );
+                            $id= _list_id( $_ );
 
                             # not seen, recurse
                             if ( !exists $reuse{$id} ) {
-                                my @list = @{$_};
-                                (@list) = reuse @list;
+                                my @list= @{$_};
+                                (@list)= reuse @list;
 
 =for Explanation:
      We need to use copy semantics, because aliasing semantics segfaults.
@@ -137,48 +136,48 @@ sub reuse (@) {
                                 copy Internals::SvREADONLY @list, 1;
 
                                 # recursive structures may be replaced
-                                $id = _list_id( $_ );
+                                $id= _list_id( $_ );
                             }
                         }
 
                         # all values of hash
                         elsif ( $reftype eq 'HASH' ) {
-                            $id = _hash_id( $_ );
+                            $id= _hash_id( $_ );
 
                             # not seen, recurse, set result if first
                             if ( !$reuse{$id} ) {
-                                my %hash = %{$_};
-                                ( @hash{ keys %hash } ) = reuse values %hash;
+                                my %hash= %{$_};
+                                ( @hash{ keys %hash } )= reuse values %hash;
 
                                 # mark readonly, see above
                                 copy Internals::SvREADONLY %hash, 1;
 
                                 # recursive structures may be replaced
-                                $id = _hash_id( $_ );
+                                $id= _hash_id( $_ );
                             }
                         }
 
                         # the value of a scalar ref
                         elsif ( $reftype eq 'SCALAR' ) {
-                            my $scalar = ${$_};
+                            my $scalar= ${$_};
 
                             # may be reused
                             if ( defined $scalar ) {
-                                $id = md5( $S . $scalar );
+                                $id= md5( $S . $scalar );
 
                                 # not seen, recurse, set result if first
                                 if ( !$reuse{$id} ) {
-                                    ($scalar) = reuse $scalar;
+                                    ($scalar)= reuse $scalar;
                                     copy Internals::SvREADONLY $scalar, 1;
 
                                     # recursive structures may be replaced
-                                    $id = md5( $S . $scalar );
+                                    $id= md5( $S . $scalar );
                                 }
                             }
 
                             # always reuse the default undef value
                             else {
-                                $id = $U;
+                                $id= $U;
                             }
                         }
 
@@ -199,7 +198,7 @@ sub reuse (@) {
                         $reuse{$id} ||= $_ if $not_void;
 
                         # store in data store
-                        $reuse{$_} = $reuse{$id} || $_;
+                        $reuse{$_}= $reuse{$id} || $_;
                     };   #alias
 
                     # done handling this ref
@@ -214,11 +213,11 @@ sub reuse (@) {
                 else {
 
                     # not readonly already, make a read only copy
-                    $_ = $_, Internals::SvREADONLY $_, 1
+                    $_= $_, Internals::SvREADONLY $_, 1
                       if !Internals::SvREADONLY $_;
 
                     # store in data store
-                    alias $reuse{$_} = $_;
+                    alias $reuse{$_}= $_;
                 }
             }
         }
@@ -242,9 +241,9 @@ sub reuse (@) {
 sub fixate (\[@%]@) {
 
     # fetch structure
-    alias my $struct = shift;
+    alias my $struct= shift;
     croak "Must specify a hash or array as first parameter to fixate"
-      unless my $reftype = reftype $struct;
+      unless my $reftype= reftype $struct;
 
     # just fixate existing structure
     reuse($struct), return if !@_;
@@ -254,23 +253,23 @@ sub fixate (\[@%]@) {
 
         # it's a hash
         if ( $reftype eq 'HASH' ) {
-            my %hash = %{$struct};
+            my %hash= %{$struct};
             croak "Can only fixate specific values on an empty hash"
               if keys %hash;
 
             # fill the hash and make sure only its values are reused
-            (%hash) = @_;
+            (%hash)= @_;
             reuse \%hash; # also makes hash ro
         }
 
         # it's is an array
         elsif ( $reftype eq 'ARRAY' ) {
-            my @array = @{$struct};
+            my @array= @{$struct};
             croak "Can only fixate specific values on an empty array"
               if @array;
 
             # fill the array and make sure its values are reused
-            (@array) = reuse @_;
+            (@array)= reuse @_;
             copy Internals::SvREADONLY @array, 1; # must copy, see above
         }
 
@@ -279,6 +278,8 @@ sub fixate (\[@%]@) {
             croak "Don't know how to fixate '$reftype' references";
         }
     };
+
+    return;
 } #fixate
 
 #---------------------------------------------------------------------------
@@ -293,16 +294,16 @@ sub fixate (\[@%]@) {
 sub spread (\[@%]@) {
 
     # find out where to spread
-    alias my $struct = shift;
+    alias my $struct= shift;
     croak "Must specify a hash or array as first parameter to spread"
-      unless my $reftype = reftype $struct;
+      unless my $reftype= reftype $struct;
 
     # huh? no value?
     croak "Must specify a value as second parameter to spread"
       if !@_;
 
     # fetch proper constant alias
-    alias my $value = reuse shift;
+    alias my $value= reuse shift;
 
     # nothing to be done
     return if !@_;
@@ -312,22 +313,22 @@ sub spread (\[@%]@) {
 
         # it's a hash, but can we do it?
         if ( $reftype eq 'HASH' ) {
-            my %hash = %{$struct};
+            my %hash= %{$struct};
             croak "Cannot spread values in a restricted hash"
               if Internals::SvREADONLY %hash;
 
             # spread the values in the hash
-            $hash{$_} = $value foreach @_;
+            $hash{$_}= $value foreach @_;
         }
 
         # it's an array, but can we do it?
         elsif ( $reftype eq 'ARRAY' ) {
-            my @array = @{$struct};
+            my @array= @{$struct};
             croak "Cannot spread values in a restricted array"
               if Internals::SvREADONLY @array;
 
             # spread the values in the list
-            $array[$_] = $value foreach @_;
+            $array[$_]= $value foreach @_;
         }
 
         # huh?
@@ -335,6 +336,8 @@ sub spread (\[@%]@) {
             croak "Don't know how to spread values in '$reftype' references";
         }
     };
+
+    return;
 }    #spread
 
 #---------------------------------------------------------------------------
@@ -346,10 +349,12 @@ sub spread (\[@%]@) {
 sub forget {
 
     # copy a fresh undef value (shouldn't alias the system undef!)
-    %reuse = ( $U => undef );
+    %reuse= ( $U => undef );
 
     # make sure this undef can't be changed
     Internals::SvREADONLY $reuse{$U}, 1;
+
+    return;
 } #forget
 
 #---------------------------------------------------------------------------
@@ -365,10 +370,11 @@ sub forget {
 # OUT: 1 id
 
 sub _hash_id {
-    alias my %hash = %{ $_[0] };
+    alias my %hash= %{ $_[0] };
 
-    return md5( $H . join $;,
-      map { $_ => ( defined $hash{$_} ? $hash{$_} : $U ) } sort keys %hash );
+    return md5( encode_utf8( $H . join $;, map {
+      $_ => ( defined $hash{$_} ? $hash{$_} : $U )
+    } sort keys %hash ) );
 }    #_hash_id
 
 #---------------------------------------------------------------------------
@@ -380,7 +386,7 @@ sub _hash_id {
 # OUT: 1 id
 
 sub _list_id {
-    alias my @list = @{ $_[0] };
+    alias my @list= @{ $_[0] };
 
     return md5( $A . join $;, map { defined() ? $_ : $U } @list );
 }    #_list_id
@@ -408,32 +414,32 @@ Data::Reuse - share constant values with Data::Alias
 
 =head1 VERSION
 
-This documentation describes version 0.06.
+This documentation describes version 0.08.
 
 =head1 SYNOPSIS
 
  use Data::Reuse qw(fixate);
  fixate my @array => ( 0, 1, 2, 3 );  # initialize and fixate
- my @filled_array =  ( 0, 1, 2, 3 );
+ my @filled_array=  ( 0, 1, 2, 3 );
  fixate @filled_array;                # fixate existing values
  print \$array[0] == \$filled_array[0]
    ? "Share memory\n" : "Don't share memory\n";
 
  fixate my %hash => ( zero => 0, one => 1, two => 2, three => 3 ); 
- my %filled_hash =  ( zero => 0, one => 1, two => 2, three => 3 );
+ my %filled_hash=  ( zero => 0, one => 1, two => 2, three => 3 );
  fixate %filled_hash;
  print \$hash{zero} == \$filled_hash{zero}
    ? "Share memory\n" : "Don't share memory\n";
 
  use Data::Reuse qw(reuse);
- reuse my $listref = [ 0, 1, 2, 3 ];
- reuse my $hashref = { zero => 0, one => 1, two => 2, three => 3 };
+ reuse my $listref= [ 0, 1, 2, 3 ];
+ reuse my $hashref= { zero => 0, one => 1, two => 2, three => 3 };
  print \$listref->[0] == \$hashref->{zero}
    ? "Share memory\n" : "Don't share memory\n";
 
  use Data::Alias qw(alias);
  use Data::Reuse qw(reuse);
- alias my @foo = reuse ( 0, 1, 2, 3 );
+ alias my @foo= reuse ( 0, 1, 2, 3 );
  print \$foo[0] == \$hashref->{zero}
    ? "Share memory\n" : "Don't share memory\n";
 
@@ -483,12 +489,12 @@ wisely, only on values that you expect to be duplicated at least two times.
 
  fixate my @array => ( 0, 1, 2, 3 );
 
- my @filled_array = ( 0, 1, 2, 3 );
+ my @filled_array= ( 0, 1, 2, 3 );
  fixate @filled_array;
 
  fixate my %hash => ( zero => 0, one => 1, two => 2, three => 3 );
 
- my %filled_hash = ( zero => 0, one => 1, two => 2, three => 3 );
+ my %filled_hash= ( zero => 0, one => 1, two => 2, three => 3 );
  fixate %filled_hash;
 
 The C<fixate> function allows you to initialize an array or hash with the given
@@ -498,11 +504,11 @@ mainly made for convenience only.
 
 =head2 reuse
 
- my $listref = reuse [ 1, 2, 3 ];
- my $hashref = reuse { one => 1, two => 2, three => 3 };
+ my $listref= reuse [ 1, 2, 3 ];
+ my $hashref= reuse { one => 1, two => 2, three => 3 };
 
- my @list = ( 1, 2, 3 );
- my %hash = ( one => 1, two > 2, three => 3 );
+ my @list= ( 1, 2, 3 );
+ my %hash= ( one => 1, two > 2, three => 3 );
  reuse \@list, \%hash;
 
 The C<reuse> function is the workhorse of this module.  It will investigate
@@ -522,7 +528,7 @@ the values of a hash, specified by a number of keys.  It is a frontend to
 C<reuse> and is mainly made because you cannot use undef in C<alias> semantics
 as a value in a hash.  In other words:
 
- alias @hash{ qw(foo bar baz) } = ();
+ alias @hash{ qw(foo bar baz) }= ();
 
 doesn't work, instead use:
 
@@ -544,11 +550,11 @@ the constants into the same memory locations.
 
  use Data::Reuse qw(reuse);
 
- my $sth = $dbh->prepare( <<"SQL" );
+ my $sth= $dbh->prepare( <<"SQL" );
  SELECT room_id, date, rate_id, price, rooms
    FROM inventory
   WHERE date BETWEEN '$first_date' AND '$last_date'
-    AND hotel_id = $hotel_id
+    AND hotel_id= $hotel_id
   ORDER BY date
  SQL
  my $sth->execute;
@@ -594,12 +600,12 @@ anywhere else (a.k.a. usually the memory used by the keys).
 Unfortunately, it is not possible to directly share lists and hashes.  This
 is because perl will make copies again after the reusing action:
 
- reuse my @list = ( 1, 2, 3 );
+ reuse my @list= ( 1, 2, 3 );
 
 is functionally equivalent with:
 
  reuse ( 1, 2, 3 );
- my @list = ( 1, 2, 3 );
+ my @list= ( 1, 2, 3 );
 
 so, this will cause the values B<1>, B<2> and B<3> to be in the internal reused
 values hash, but the assignment of C<@list> will use new copies, thus
@@ -607,7 +613,7 @@ annihilating any memory savings.
 
 Alternately:
 
- my @list = reuse( 1, 2, 3);
+ my @list= reuse( 1, 2, 3);
 
 will not produce any space savings because the values are copied again by
 perl after having been reused.  If you still want to use this type of idiom,
@@ -615,7 +621,7 @@ you can with the help of the "alias" function of the L<Data::Alias> module,
 which you can also import from the L<Data::Reuse> module for your convenience:
 
  use Data::Reuse qw(alias reuse);
- alias my @list = reuse( 1, 2, 3);
+ alias my @list= reuse( 1, 2, 3);
 
 will then generate the desired result.
 
@@ -651,7 +657,7 @@ L<Data::Alias> module.
 
 Elizabeth Mattijsen <liz@dijkmat.nl>
 
-Copyright (C) 2006, 2007 Elizabeth Mattijsen.  All rights reserved.
+Copyright (C) 2006, 2007, 2009, 2012 Elizabeth Mattijsen.  All rights reserved.
 This program is free software; you can redistribute it and/or modify 
 it under the same terms as Perl itself.
 

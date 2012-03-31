@@ -1,3 +1,12 @@
+0.08	31 March 2012
+	Some minor documentation fixes.  Verified it's working with 5.14.2,
+	both threaded and unthreaded.
+
+	Fix creation of internal keys for UTF-8 encoded strings.
+
+0.07	7 August 2009
+	Upgraded to 5.10.1, and upgraded to latest code esthetics insights.
+
 0.06	11 September 2007
 	Raised dependency of Data::Alias to version 1.07 because of issues
 	with 1.06 that were fixed in 1.07.  And some minor pod fixes.

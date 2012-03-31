@@ -1,4 +1,4 @@
-README for Data::Constant
+README for Data::Reuse
 
 Provide an easy way to have constants and literal strings share memory.
 
@@ -7,7 +7,7 @@ reserved.  This program is free software; you can redistribute it and/or
 modify it under the same terms as Perl itself.
 
 Version:
- 0.06
+ 0.08
 
 Required Modules:
  Data::Alias (1.07)
