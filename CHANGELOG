@@ -1,35 +1,39 @@
-0.08	31 March 2012
-	Some minor documentation fixes.  Verified it's working with 5.14.2,
-	both threaded and unthreaded.
+0.09    4 May 2012
+        Added license information as parameter.  Verified it works with
+        5.15.9 threaded and unthreaded.
 
-	Fix creation of internal keys for UTF-8 encoded strings.
+0.08    31 March 2012
+        Some minor documentation fixes.  Verified it's working with 5.14.2,
+        both threaded and unthreaded.
 
-0.07	7 August 2009
-	Upgraded to 5.10.1, and upgraded to latest code esthetics insights.
+        Fix creation of internal keys for UTF-8 encoded strings.
 
-0.06	11 September 2007
-	Raised dependency of Data::Alias to version 1.07 because of issues
-	with 1.06 that were fixed in 1.07.  And some minor pod fixes.
+0.07    7 August 2009
+        Upgraded to 5.10.1, and upgraded to latest code esthetics insights.
 
-0.05	23 August 2006
-	Some tweaks in "reuse" for better performance.
+0.06    11 September 2007
+        Raised dependency of Data::Alias to version 1.07 because of issues
+        with 1.06 that were fixed in 1.07.  And some minor pod fixes.
 
-	Added subroutine "fixate" for easily initializing hashes and list,
+0.05    23 August 2006
+        Some tweaks in "reuse" for better performance.
+
+        Added subroutine "fixate" for easily initializing hashes and list,
         and to easily fixate already filled hashes and lists.
 
-	Added subtoutine "spread" for easily spreading the same constant
-	value in a hash or a list.
+        Added subtoutine "spread" for easily spreading the same constant
+        value in a hash or a list.
 
-	Added subroutine "forget" for resetting the internal hash for keeping
-	constant values.
+        Added subroutine "forget" for resetting the internal hash for keeping
+        constant values.
 
-	Removed TODO file, please check TODO section in the pod.
+        Removed TODO file, please check TODO section in the pod.
 
-0.04	16 July 2006
-	Renamed to Data::Reuse, first version released to CPAN.
+0.04    16 July 2006
+        Renamed to Data::Reuse, first version released to CPAN.
 
-0.03	29 June 2006
+0.03    29 June 2006
         Some fixes and tweaks.
 
 0.02    28 June 2006
-	First public version of Data::Constant.
+        First public version of Data::Constant.

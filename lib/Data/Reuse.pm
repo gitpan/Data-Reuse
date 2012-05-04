@@ -1,11 +1,12 @@
 package Data::Reuse;
 
-# be as strict and verbose as possible
+# runtime settings we need
+use 5.008001;
 use strict;
 use warnings;
 
 # set up version info
-our $VERSION= '0.08';
+our $VERSION= '0.09';
 
 # we need this otherwise nothing works
 use Data::Alias qw( alias copy );
@@ -414,7 +415,7 @@ Data::Reuse - share constant values with Data::Alias
 
 =head1 VERSION
 
-This documentation describes version 0.08.
+This documentation describes version 0.09.
 
 =head1 SYNOPSIS
 
