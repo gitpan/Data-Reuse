@@ -6,7 +6,7 @@ use strict;
 use warnings;
 
 # set up version info
-our $VERSION= '0.09';
+our $VERSION= '0.10';
 
 # we need this otherwise nothing works
 use Data::Alias qw( alias copy );
@@ -25,7 +25,7 @@ use Scalar::Util qw( reftype );
 
 use base 'Exporter';
 our @EXPORT=      qw();
-our @EXPORT_OK=   qw( fixate forget reuse spread );
+our @EXPORT_OK=   qw( alias fixate forget reuse spread );
 our %EXPORT_TAGS= ( all => \@EXPORT_OK );
 
 # ID prefixes
@@ -415,7 +415,7 @@ Data::Reuse - share constant values with Data::Alias
 
 =head1 VERSION
 
-This documentation describes version 0.09.
+This documentation describes version 0.10.
 
 =head1 SYNOPSIS
 
@@ -582,7 +582,7 @@ that the space savings can become B<very> significant.
 Each scalar value reused is internally matched against a hash with all
 reused values.  This also goes for references, which are reused recursively.
 For scalar values, the value itself is used as a key.  For references, an
-MD5 hash is used as the key.
+md5 hash is used as the key.
 
 All values are then aliased to the values in the hash (using L<Data::Alias>'s
 C<alias> feature) and returns as aliases when needed.
@@ -641,7 +641,7 @@ this feature should be used so that each reused value really, really only
 occurs once in memory.  Suggestions / Patches to achieve this feature are
 B<very> welcome!
 
-If this proves to be impossible to do, then probably we need to use MD5 strings
+If this proves to be impossible to do, then probably we need to use md5 strings
 for all values to reduce memory requirements (at the expense of more CPU usage).
 
 =head1 ACKNOWLEDGEMENTS
@@ -652,7 +652,7 @@ L<Data::Alias> module.
 
 =head1 REQUIRED MODULES
 
- Data::Alias (1.07)
+ Data::Alias (1.16)
 
 =head1 AUTHOR
 

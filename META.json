@@ -32,10 +32,10 @@
       },
       "runtime" : {
          "requires" : {
-            "Data::Alias" : "1.07"
+            "Data::Alias" : "1.16"
          }
       }
    },
    "release_status" : "stable",
-   "version" : "0.09"
+   "version" : "0.10"
 }

@@ -6,47 +6,46 @@ BEGIN {				# Magic Perl CORE pragma
     }
 }
 
-use Test::More tests => 56;
+use Test::More tests => 60;
 use strict;
 use warnings;
  
 # the module we need
-use Data::Alias qw(alias);
-use Data::Reuse qw(reuse);
+use Data::Reuse qw( alias reuse );
 
 # need to do dumps for checks
 use Data::Dumper qw(Dumper);
 $Data::Dumper::Sortkeys = 1;
 $Data::Dumper::Deepcopy = 1;
 
-sub is_ro { Internals::SvREADONLY $_[0] } #is_ro
+sub is_ro { ok( Internals::SvREADONLY( $_[0] ), $_[1] ) } #is_ro
 
 # undef values
 reuse my $undef = \undef;
 is( undef, $$undef );
 is( \reuse( undef ),
     \reuse( undef ) );
-ok( is_ro( reuse( undef ) ) );
+is_ro( reuse( undef ) );
 
 # scalar values
 is( 1, reuse( 1 ) );
 is( \reuse( 1 ),
     \reuse( 1 ) );
-ok( is_ro( reuse( 1 ) ) );
+is_ro( reuse( 1 ) );
 
 # scalar refs
 is( 2, ${ reuse( \2 ) } );
 is( \reuse( \2 ),
     \reuse( \2 ) );
-ok( is_ro( ${ reuse( \2 ) } ) );
+is_ro( ${ reuse( \2 ) } );
 
 # lists
 reuse my @list = ( 3, 4 );
 is( '3x4', join 'x', @list );
 is( \reuse( 3 ), \$list[0] );
 is( \reuse( 4 ), \$list[1] );
-ok( is_ro( $list[0] ) );
-ok( is_ro( $list[1] ) );
+is_ro( $list[0] );
+is_ro( $list[1] );
 eval { $list[2] = 3 };
 ok( !$@ );
 
@@ -66,8 +65,8 @@ is( \reuse( 3 ), \$listref->[0] );
 is( \reuse( 4 ), \$listref->[1] );
 is( \reuse( [ 3, 4 ] ),
     \reuse( [ 3, 4 ] ) );
-ok( is_ro( reuse( [ 3, 4 ] )->[0] ) );
-ok( is_ro( reuse( [ 3, 4 ] )->[1] ) );
+is_ro( reuse( [ 3, 4 ] )->[0] );
+is_ro( reuse( [ 3, 4 ] )->[1] );
 eval { $listref->[2] = 5 };
 like( $@, qr#^Modification of a read-only value attempted at# );
 
@@ -75,8 +74,8 @@ like( $@, qr#^Modification of a read-only value attempted at# );
 is( '3x4', join 'x', @{ reuse( [ 3, 4 ] ) } );
 is( \reuse( [ 3, 4 ] ),
     \reuse( [ 3, 4 ] ) );
-ok( is_ro( reuse( [ 3, 4 ] )->[0] ) );
-ok( is_ro( reuse( [ 3, 4 ] )->[1] ) );
+is_ro( reuse( [ 3, 4 ] )->[0] );
+is_ro( reuse( [ 3, 4 ] )->[1] );
 
 # hash refs
 reuse my $hashref = { five => 5, six => 6 };
@@ -111,18 +110,23 @@ reuse my $a123 = [ 1, [ 2, { three => 3 } ] ];
 reuse my $b123 = [ 1, [ 2, { three => 3 } ] ];
 isnt( $a123, $b123 );
 is( Dumper($a123), Dumper($b123) );
-is( \reuse( [ 1, [ 2, { three => 3 } ] ] ),
-    \reuse( [ 1, [ 2, { three => 3 } ] ] ) );
+my $z1= \reuse( [ 1, [ 2, { three => 3 } ] ] );
+my $z2= \reuse( [ 1, [ 2, { three => 3 } ] ] );
+is( $z1, $z2 );
+is( Dumper($z1), Dumper($z2) );
 
 my @x;
 @x = ( 1, [ 1, \@x ] );
-is( Dumper( reuse( \@x ) ), Dumper( \@x ) );
+is( Dumper( \@x ), Dumper( reuse( \@x ) ) );
+is( $x[0], $x[1]->[0] );
 is( \$x[0], \$x[1]->[0] );
 
 my @y;
 @y = ( 1, [ 1, [ 1, \@y ] ] );
 is( Dumper( \@y ), Dumper( reuse( \@y ) ) );
+is( $y[0], $y[1]->[0] );
 is( \$y[0], \$y[1]->[0] );
+is( $y[0], $y[1]->[1]->[0] );
 is( \$y[0], \$y[1]->[1]->[0] );
 
 # common idioms
@@ -150,8 +154,3 @@ alias my @list3 = reuse ( 51, 52 );
 alias my @list4 = reuse ( 52, 51 );
 is( \$list3[0], \$list4[1] );
 is( \$list3[1], \$list4[0] );
-
-# debugging
-#$Data::Dumper::Deepcopy = 0;
-#print STDERR Dumper( Data::Reuse::_reuse );
-__END__

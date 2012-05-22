@@ -11,6 +11,6 @@ WriteMakefile (
  LICENSE    => 'perl',
 
  PREREQ_PM	=> {qw(
-		    Data::Alias	 1.07
+		    Data::Alias	 1.16
                    )},
 );
